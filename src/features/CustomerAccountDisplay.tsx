@@ -2,8 +2,8 @@ import { type GridColDef } from "@mui/x-data-grid";
 import type { CustomerAccountDto } from "../models/CustomerAccountDto";
 import { ServerGrid_Mui } from "../components/ServerGrid_Mui";
 import { getAllCustomerAccounts } from "../services/CustomerAccountService";
-import { useEffect, useState } from "react";
-import { handleError } from "../Utilities/Toast";
+import { useEffect, useRef, useState } from "react";
+import { handleError, showInfo } from "../Utilities/Toast";
 
 const columns: GridColDef[] = [
   { field: "fullName", headerName: "Full Name", flex: 1 },
@@ -21,12 +21,19 @@ const columns: GridColDef[] = [
 export const CustomerAccountDisplay = () => {
   const [rows, setRows] = useState<CustomerAccountDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const didFetch = useRef(false);
 
   const handleCustomerAccountDisplay = async () => {
     try {
       setIsLoading(true);
       const response = await getAllCustomerAccounts();
-      setRows(response.data);
+      console.log("Customer accounts response:", response);
+      if (!response || !response.data || response.data.length === 0) {
+        showInfo("No customer accounts found.");
+        setRows([]);
+      } else {
+        setRows(response.data);
+      }
     } catch (error) {
       handleError(error);
       setRows([]);
@@ -36,7 +43,10 @@ export const CustomerAccountDisplay = () => {
   };
 
   useEffect(() => {
-    handleCustomerAccountDisplay();
+    if (!didFetch.current) {
+      handleCustomerAccountDisplay();
+      didFetch.current = true;
+    }
   }, []);
 
   return (
