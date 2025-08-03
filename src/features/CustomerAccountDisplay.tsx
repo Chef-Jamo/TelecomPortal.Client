@@ -17,22 +17,6 @@ const columns: GridColDef[] = [
     valueFormatter: (params) => (params ? "Yes" : "No"),
   },
 ];
-const rows: CustomerAccountDto[] = [
-  {
-    id: "1",
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "123-456-7890",
-    isActive: true,
-  },
-  {
-    id: "2",
-    fullName: "Jane Smith",
-    email: "jane.smith@example.com",
-    phoneNumber: "098-765-4321",
-    isActive: false,
-  },
-];
 
 export const CustomerAccountDisplay = () => {
   const [rows, setRows] = useState<CustomerAccountDto[]>([]);
