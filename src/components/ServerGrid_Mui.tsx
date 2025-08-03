@@ -20,7 +20,7 @@ export function ServerGrid_Mui<T>({
   );
 
   return (
-    <div style={{ height: "calc(100vh - (64px + 52px))", width: "100%" }}>
+    <div className='w-full'>
       <div className='flex justify-start items-center mb-2 gap-2'>
         <TextField
           variant='outlined'
