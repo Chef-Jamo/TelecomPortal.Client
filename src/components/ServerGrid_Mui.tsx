@@ -16,7 +16,6 @@ export function ServerGrid_Mui<T>({
   isLoading = true,
 }: ServerGridMuiProps<T>) {
   const [search, setSearch] = useState("");
-
   const filteredRows = rows.filter((row) =>
     JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
   );
@@ -32,7 +31,7 @@ export function ServerGrid_Mui<T>({
             setSearch(e.target.value)
           }
           size='small'
-          className='w-60 bg-white dark:bg-gray-900 rounded'
+          className='w-60 bg-white dark:bg-gray-400 rounded'
         />
         {search && (
           <Button
@@ -45,17 +44,28 @@ export function ServerGrid_Mui<T>({
           </Button>
         )}
       </div>
-      <DataGrid
-        loading={isLoading}
-        rows={filteredRows}
-        columns={columns}
-        getRowId={getRowId}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 5, page: 0 } },
-        }}
-        pageSizeOptions={[5, 10, 20]}
-        disableRowSelectionOnClick
-      />
+      <div className='w-full max-h-[600px] min-h-[300px] overflow-y-auto'>
+        <DataGrid
+          loading={isLoading}
+          rows={filteredRows}
+          columns={columns}
+          getRowId={getRowId}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 10, page: 0 } },
+          }}
+          pageSizeOptions={[5, 10, 20]}
+          disableRowSelectionOnClick
+          sx={{
+            height: "100%",
+            minHeight: 300,
+            maxHeight: 600,
+            "& .MuiDataGrid-virtualScroller": {
+              overflowY: "auto",
+              maxHeight: 600,
+            },
+          }}
+        />
+      </div>
     </div>
   );
 }

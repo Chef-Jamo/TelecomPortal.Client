@@ -27,12 +27,11 @@ export const CustomerAccountDisplay = () => {
     try {
       setIsLoading(true);
       const response = await getAllCustomerAccounts();
-      console.log("Customer accounts response:", response);
-      if (!response || !response.data || response.data.length === 0) {
+      if (response) {
+        setRows(response);
+      } else {
         showInfo("No customer accounts found.");
         setRows([]);
-      } else {
-        setRows(response.data);
       }
     } catch (error) {
       handleError(error);
