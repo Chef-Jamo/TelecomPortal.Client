@@ -6,12 +6,14 @@ export interface ServerGridMuiProps<T> {
   rows: T[];
   columns: GridColDef[];
   getRowId: (row: T) => string | number;
+  isLoading?: boolean;
 }
 
 export function ServerGrid_Mui<T>({
   rows,
   columns,
   getRowId,
+  isLoading = true,
 }: ServerGridMuiProps<T>) {
   const [search, setSearch] = useState("");
 
@@ -44,6 +46,7 @@ export function ServerGrid_Mui<T>({
         )}
       </div>
       <DataGrid
+        loading={isLoading}
         rows={filteredRows}
         columns={columns}
         getRowId={getRowId}
