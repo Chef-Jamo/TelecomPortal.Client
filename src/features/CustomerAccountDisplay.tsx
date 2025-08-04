@@ -49,11 +49,10 @@ export const CustomerAccountDisplay = () => {
   const [rows, setRows] = useState<CustomerAccountDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const didFetch = useRef(false);
+  const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<CustomerAccountDto | null>(
     null
   );
-
-  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
