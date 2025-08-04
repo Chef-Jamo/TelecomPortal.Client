@@ -1,20 +1,24 @@
 import { type GridColDef } from "@mui/x-data-grid";
 import type { CustomerAccountDto } from "../models/CustomerAccountDto";
 import { ServerGrid_Mui } from "../components/ServerGrid_Mui";
-import { getAllCustomerAccounts } from "../services/CustomerAccountService";
+import {
+  getAllCustomerAccounts,
+  updateCustomerAccount,
+} from "../services/CustomerAccountService";
 import { useEffect, useRef, useState } from "react";
-import { handleError, showInfo } from "../Utilities/Toast";
+import { handleError, showInfo, showSuccess } from "../Utilities/Toast";
 
 const columns: GridColDef[] = [
-  { field: "fullName", headerName: "Full Name", flex: 1 },
-  { field: "email", headerName: "Email", flex: 1 },
-  { field: "phoneNumber", headerName: "Phone Number", flex: 1 },
+  { field: "fullName", headerName: "Full Name", flex: 1, editable: true },
+  { field: "email", headerName: "Email", flex: 1, editable: true },
+  { field: "phoneNumber", headerName: "Phone Number", flex: 1, editable: true },
   {
     field: "isActive",
     headerName: "Active",
     flex: 0.5,
     type: "boolean",
     valueFormatter: (params) => (params ? "Yes" : "No"),
+    editable: true,
   },
 ];
 
@@ -41,6 +45,25 @@ export const CustomerAccountDisplay = () => {
     }
   };
 
+  const handleUpdate = async (
+    newRow: CustomerAccountDto,
+    oldRow: CustomerAccountDto
+  ) => {
+    try {
+      const updated = await updateCustomerAccount(newRow);
+      if (updated) {
+        showSuccess("Customer account updated successfully.");
+      }
+      setRows((prev) =>
+        prev.map((row) => (row.id === updated.id ? updated : row))
+      );
+      return updated;
+    } catch (error) {
+      handleError(error);
+      return oldRow;
+    }
+  };
+
   useEffect(() => {
     if (!didFetch.current) {
       handleCustomerAccountDisplay();
@@ -54,6 +77,7 @@ export const CustomerAccountDisplay = () => {
       columns={columns}
       getRowId={(row) => row.id}
       isLoading={isLoading}
+      onRowUpdate={handleUpdate}
     />
   );
 };

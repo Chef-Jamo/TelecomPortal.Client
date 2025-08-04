@@ -1,12 +1,18 @@
 import { Button, TextField } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { useState, type ChangeEvent } from "react";
+import {
+  DataGrid,
+  type GridColDef,
+  GridRowModes,
+  type GridRowModesModel,
+} from "@mui/x-data-grid";
+import { useEffect, useState, type ChangeEvent } from "react";
 
 export interface ServerGridMuiProps<T> {
   rows: T[];
   columns: GridColDef[];
   getRowId: (row: T) => string | number;
   isLoading?: boolean;
+  onRowUpdate?: (newRow: T, oldRow: T) => Promise<T> | T | void;
 }
 
 export function ServerGrid_Mui<T>({
@@ -14,11 +20,48 @@ export function ServerGrid_Mui<T>({
   columns,
   getRowId,
   isLoading = true,
+  onRowUpdate,
 }: ServerGridMuiProps<T>) {
   const [search, setSearch] = useState("");
   const filteredRows = rows.filter((row) =>
     JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
   );
+  const [localRows, setLocalRows] = useState<T[]>(rows);
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  useEffect(() => {
+    setLocalRows(rows);
+  }, [rows]);
+
+  const processRowUpdate = async (newRow: any, oldRow: any) => {
+    if (onRowUpdate) {
+      const result = await onRowUpdate(newRow, oldRow);
+      if (result) {
+        setLocalRows((prev) =>
+          prev.map((row) => (getRowId(row) === getRowId(newRow) ? result : row))
+        );
+        return result;
+      }
+    }
+    setLocalRows((prev) =>
+      prev.map((row) => (getRowId(row) === getRowId(newRow) ? newRow : row))
+    );
+    return newRow;
+  };
+
+  const handleRowDoubleClick = (params: any) => {
+    setRowModesModel((prev) => ({
+      ...prev,
+      [params.id]: { mode: GridRowModes.Edit },
+    }));
+  };
+
+  const handleRowEditStop = (params: any, event: any) => {
+    setRowModesModel((prev) => ({
+      ...prev,
+      [params.id]: { mode: GridRowModes.View },
+    }));
+  };
 
   return (
     <div className='w-full'>
@@ -54,7 +97,11 @@ export function ServerGrid_Mui<T>({
             pagination: { paginationModel: { pageSize: 10, page: 0 } },
           }}
           pageSizeOptions={[5, 10, 20]}
-          disableRowSelectionOnClick
+          processRowUpdate={processRowUpdate}
+          rowModesModel={rowModesModel}
+          onRowDoubleClick={handleRowDoubleClick}
+          onRowEditStop={handleRowEditStop}
+          editMode='row'
           sx={{
             height: "100%",
             minHeight: 300,
