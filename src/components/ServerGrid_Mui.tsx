@@ -24,6 +24,7 @@ export interface ServerGridMuiProps<T> {
   isLoading?: boolean;
   onRowUpdate?: (newRow: T, oldRow: T) => Promise<T> | T | void;
   onRowCreate?: (newRow: T) => Promise<T> | T | void;
+  onRowDelete?: (row: T) => Promise<void> | void;
   createRowTemplate?: T;
 }
 
@@ -34,6 +35,7 @@ export function ServerGrid_Mui<T>({
   isLoading = true,
   onRowUpdate,
   onRowCreate,
+  onRowDelete,
   createRowTemplate,
 }: ServerGridMuiProps<T>) {
   const [search, setSearch] = useState("");
@@ -120,6 +122,7 @@ export function ServerGrid_Mui<T>({
 
   const handleDeleteClick = (id: GridRowId) => () => {
     setLocalRows((prev) => prev.filter((row) => getRowId(row) !== id));
+    onRowDelete?.(localRows.find((row) => getRowId(row) === id) as T);
   };
 
   const handleCancelClick = (id: GridRowId) => () => {

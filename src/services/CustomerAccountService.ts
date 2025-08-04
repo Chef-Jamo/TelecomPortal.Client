@@ -25,5 +25,5 @@ export const updateCustomerAccount = async (customer: CustomerAccountDto) => {
 
 export const deleteCustomerAccount = async (id: number) => {
   const response = await axios.delete(`${API_URL}/${id}`);
-  return response.status === 204;
+  return response.data;
 };
