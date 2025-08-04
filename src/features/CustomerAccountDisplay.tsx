@@ -122,10 +122,9 @@ export const CustomerAccountDisplay = () => {
     setSelectedRow(row);
   };
 
-  const hadndleConfirmDelete = async () => {
+  const confirmDelete = async () => {
     if (selectedRow) {
       try {
-        debugger;
         const response = await deleteCustomerAccount(selectedRow.id);
         if (response) {
           showSuccess("Customer account deleted successfully.");
@@ -167,7 +166,7 @@ export const CustomerAccountDisplay = () => {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'>
         <DialogTitle id='alert-dialog-title'>
-          {"You sure you want to delete this Customer Account?"}
+          {`You sure you want to delete '${selectedRow?.fullName}'?`}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
@@ -176,7 +175,7 @@ export const CustomerAccountDisplay = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={hadndleConfirmDelete} autoFocus>
+          <Button onClick={confirmDelete} autoFocus>
             Confirm
           </Button>
         </DialogActions>
