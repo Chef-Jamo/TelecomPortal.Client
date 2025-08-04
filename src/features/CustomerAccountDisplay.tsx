@@ -2,6 +2,7 @@ import { type GridColDef } from "@mui/x-data-grid";
 import type { CustomerAccountDto } from "../models/CustomerAccountDto";
 import { ServerGrid_Mui } from "../components/ServerGrid_Mui";
 import {
+  createCustomerAccount,
   getAllCustomerAccounts,
   updateCustomerAccount,
 } from "../services/CustomerAccountService";
@@ -21,6 +22,14 @@ const columns: GridColDef[] = [
     editable: true,
   },
 ];
+
+const createRowTemplate: CustomerAccountDto = {
+  id: 0,
+  fullName: "",
+  email: "",
+  phoneNumber: "",
+  isActive: false,
+};
 
 export const CustomerAccountDisplay = () => {
   const [rows, setRows] = useState<CustomerAccountDto[]>([]);
@@ -50,6 +59,7 @@ export const CustomerAccountDisplay = () => {
     oldRow: CustomerAccountDto
   ) => {
     try {
+      debugger;
       const updated = await updateCustomerAccount(newRow);
       if (updated) {
         showSuccess("Customer account updated successfully.");
@@ -61,6 +71,24 @@ export const CustomerAccountDisplay = () => {
     } catch (error) {
       handleError(error);
       return oldRow;
+    }
+  };
+
+  const handleCreate = async (
+    newRow: CustomerAccountDto & { isNew?: boolean }
+  ) => {
+    try {
+      const { isNew, ...payload } = { ...newRow, id: 0 };
+      const created = await createCustomerAccount(payload);
+      if (created) {
+        showSuccess("Customer account created successfully.");
+        setRows((prev) => [created, ...prev]);
+        return created;
+      }
+      return newRow;
+    } catch (error) {
+      handleError(error);
+      return newRow;
     }
   };
 
@@ -78,6 +106,8 @@ export const CustomerAccountDisplay = () => {
       getRowId={(row) => row.id}
       isLoading={isLoading}
       onRowUpdate={handleUpdate}
+      onRowCreate={handleCreate}
+      createRowTemplate={createRowTemplate}
     />
   );
 };
