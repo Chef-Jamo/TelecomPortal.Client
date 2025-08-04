@@ -6,7 +6,6 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 const Navbar = () => {
   const [darkMode, setDarkMode] = useState(false);
 
-  // Initialize theme from localStorage or system preference
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -44,7 +43,7 @@ const Navbar = () => {
 
         <Box className='flex items-center space-x-2'>
           <LightModeIcon className='text-yellow-500' />
-          <Switch checked={darkMode} onChange={handleThemeToggle} />
+          <Switch disabled checked={darkMode} onChange={handleThemeToggle} />
           <DarkModeIcon className='text-gray-300 dark:text-white' />
         </Box>
       </Toolbar>
